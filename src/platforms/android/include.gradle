@@ -1,0 +1,22 @@
+/* Include.gradle configuration: http://docs.nativescript.org/plugins/plugins#includegradle-specification */
+
+android {
+	
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases"
+        }
+    }
+}
+
+dependencies {
+    // Describe plugin native Android dependencies like
+	// implementation "groupName:pluginName:ver" 
+    // EXAMPLE: implementation "com.facebook.fresco:fresco:0.9.0+"
+    implementation ('org.jitsi.react:jitsi-meet-sdk:2.+') { transitive = true }
+}
