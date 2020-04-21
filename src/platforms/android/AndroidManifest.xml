@@ -4,5 +4,19 @@
 	<!--Describe the permissions, features or other configurations required by your plugin for Android. 
 		To read more about android permissions go to https://developer.android.com/guide/topics/permissions/index.html -->
 	<!--EXAMPLE: uses-permission android:name="android.permission.INTERNET"/> -->
+	<!-- android:launchMode="singleInstance" -->
 
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+	
+	
 </manifest>

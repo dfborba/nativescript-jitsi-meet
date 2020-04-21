@@ -1,5 +1,3 @@
-import { JitsiMeet } from 'nativescript-jitsi-meet';
-console.log(new JitsiMeet().message);
 import { Component } from "@angular/core";
 
 @Component({

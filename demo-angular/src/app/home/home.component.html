@@ -2,6 +2,8 @@
     <Label text="Home"></Label>
 </ActionBar>
 
-<GridLayout>
-    <!-- Add your page content here -->
+<GridLayout rows="auto auto auto" columns="2* 2*">
+    <Label row="0" col="0" colSpan="2" class="h1" horizontalAlignment="center" [text]="message"></Label>
+    <TextField (textChange)="roomNameChange($event)" row="1" col="0" colSpan="2"></TextField>
+    <Button row="2" col="0" class="-primary" text="Start View" (tap)="startVideo()"></Button>
 </GridLayout>

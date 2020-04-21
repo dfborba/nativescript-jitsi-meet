@@ -1,7 +1,6 @@
-import { Common } from './jitsi-meet.common';
-export declare class JitsiMeet extends Common {
-  // define your typings manually
-  // or..
-  // take the ios or android .d.ts files and copy/paste them here
+import { JitsiMeetConferenceOptions } from './jitsi-meet-configuration';
+
+export declare class JitsiMeet {
+  constructor(o?: JitsiMeetConferenceOptions);
   startMeeting(roomName: string);
 }

@@ -1,7 +1,7 @@
 {
 	"name": "nativescript-jitsi-meet",
-	"version": "1.0.0",
-	"description": "Your awesome NativeScript plugin.",
+	"version": "1.1.0",
+	"description": "Nativescript for Jitsi meet developed by Witfy.",
 	"main": "jitsi-meet",
 	"typings": "index.d.ts",
 	"nativescript": {
@@ -37,8 +37,8 @@
 		"iOS"
 	],
 	"author": {
-		"name": "Your Name",
-		"email": "youremail@yourdomain.com"
+		"name": "Daniel Borba",
+		"email": "daniel@witfy.io"
 	},
 	"bugs": {
 		"url": "https://github.com/dfborba/nativescript-jitsi-meet/issues"
