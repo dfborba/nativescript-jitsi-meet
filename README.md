@@ -1,7 +1,7 @@
 # nativescript-jitsi-meet
 **This plugin is on a very early version. I'll probably have something better on the next week. (04-27)** :wink:
 
-##### I'm working on
+## I'm working on
 - Improve Jitsi configuration; 
 - Add a few listeners;
 - Create IOS version;
