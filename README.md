@@ -5,7 +5,7 @@ The next steps are:
 - Improve use of Jitsi configuration and add a few listeners;
 - Create IOS version;
 
-## (Optional) Prerequisites / Requirements
+## Prerequisites / Requirements
 
 #TODO
 
@@ -13,17 +13,9 @@ The next steps are:
 
 #TODO
 
-```javascript
-tns plugin add nativescript-jitsi-meet
-```
-
 ## Usage 
 
 #TODO
-	
-	```javascript
-    Usage code snippets here
-    ```)
 
 ## API
 
