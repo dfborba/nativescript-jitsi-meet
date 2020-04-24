@@ -1,5 +1,6 @@
 # nativescript-jitsi-meet
 **This plugin is on a very early version. I'll probably have something better on the next week. (04-27)**
+
 **As soon as the code improves I'll be updating the README as well.**  :wink:
 
 ## I'm working on
