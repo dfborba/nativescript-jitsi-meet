@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { JitsiMeet } from 'nativescript-jitsi-meet';
 import { JitsiMeetConferenceOptions } from 'nativescript-jitsi-meet/jitsi-meet-configuration';
+import { EventData } from "tns-core-modules/ui/page/page";
+import { Switch } from "tns-core-modules/ui/switch";
 
 @Component({
     selector: "Home",
@@ -10,11 +12,12 @@ export class HomeComponent implements OnInit {
     public message: string;
     private _roomName: string = '';
     private _jitsiCaller: JitsiMeet;
+    public jitsiOptions: JitsiMeetConferenceOptions;
     constructor() {
         // Use the component constructor to inject providers.
         this.message = 'Hey There';
         
-        let options: JitsiMeetConferenceOptions = {
+        this.jitsiOptions = {
             audioMuted: false,
             videoMuted: false,
             audioOnly: false,
@@ -28,8 +31,6 @@ export class HomeComponent implements OnInit {
                 welcomePageEnabled: true
             }
         };
-
-        this._jitsiCaller = new JitsiMeet(options);
     }
 
     ngOnInit(): void {
@@ -42,10 +43,32 @@ export class HomeComponent implements OnInit {
     }
 
     public startVideo() {
+        this._jitsiCaller = new JitsiMeet(this.jitsiOptions);
+
         if (!!this._roomName) {
             this._jitsiCaller.startMeeting(this._roomName);
         } else {
             this._jitsiCaller.startMeeting('witfy-2020');
         }
+    }
+
+    public audioMuted(args: EventData) {
+        let sw = args.object as Switch;
+        this.jitsiOptions.audioMuted = sw.checked;
+    }
+
+    public videoMuted(args: EventData) {
+        let sw = args.object as Switch;
+        this.jitsiOptions.videoMuted = sw.checked;
+    }
+
+    public audioOnly(args: EventData) {
+        let sw = args.object as Switch;
+        this.jitsiOptions.audioOnly = sw.checked;
+    }
+
+    public inviteEnabled(args: EventData) {
+        let sw = args.object as Switch;
+        this.jitsiOptions.featureFlags.inviteEnabled = sw.checked;
     }
 }

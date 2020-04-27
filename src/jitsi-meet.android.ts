@@ -71,6 +71,22 @@ export class JitsiMeet {
 		const context = application.android.context;
 		const jitsiConnector = new io.witfy.jitsiconnector.JitsiConnectorActivity();
 
+		jitsiConnector.setJitsiStateListener(new io.witfy.jitsiconnector.JitsiStateListener({
+			onConferenceStarted: (test: string) => {
+				console.log('## ' + test);
+			},
+			onConferenceTerminated: (url: string, error: string) => {
+				console.log('url: ' + url);
+				console.log('error: ' + error);
+			},
+			onConferenceWillJoin: (url: string) => {
+				console.log('## onConferenceWillJoin URL = ' + url);
+			},
+			onConferenceJoined: (url: string) => {
+				console.log('## onConferenceJoined ' + url);
+			},
+		}));
+
 		if (!!roomName) {
 			if (!this._configuration) {
 				jitsiConnector.startVideo(context, roomName);

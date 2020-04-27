@@ -3,7 +3,24 @@
 </ActionBar>
 
 <GridLayout rows="auto auto auto" columns="2* 2*">
-    <Label row="0" col="0" colSpan="2" class="h1" horizontalAlignment="center" [text]="message"></Label>
-    <TextField (textChange)="roomNameChange($event)" row="1" col="0" colSpan="2"></TextField>
+    <FlexboxLayout row="0" col="0" colSpan="2" flexWrap="wrap" class="p-20">
+        <StackLayout orientation="horizontal" margin="5" padding="0">
+            <Label class="h3" text="Audio.muted" verticalAlignment="middle"></Label>
+            <Switch checked="false" (checkedChange)="audioMuted($event)"></Switch>
+        </StackLayout>
+        <StackLayout orientation="horizontal" margin="5" padding="0">
+            <Label class="h3" text="Video.muted" verticalAlignment="middle"></Label>
+            <Switch checked="false" (checkedChange)="videoMuted($event)"></Switch>
+        </StackLayout>
+        <StackLayout orientation="horizontal" margin="5" padding="0">
+            <Label class="h3" text="Audio.only" verticalAlignment="middle"></Label>
+            <Switch checked="false" (checkedChange)="audioOnly($event)"></Switch>
+        </StackLayout>
+        <StackLayout orientation="horizontal" margin="5" padding="0">
+            <Label class="h3" text="Invited.enable" verticalAlignment="middle"></Label>
+            <Switch checked="false" (checkedChange)="inviteEnabled($event)"></Switch>
+        </StackLayout>
+    </FlexboxLayout>
+    <TextField (textChange)="roomNameChange($event)" row="1" col="0"></TextField>
     <Button row="2" col="0" class="-primary" text="Start View" (tap)="startVideo()"></Button>
 </GridLayout>

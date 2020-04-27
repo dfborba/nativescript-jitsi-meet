@@ -52,11 +52,16 @@ declare module io {
 	export module witfy {
 		export module jitsiconnector {
 			export class JitsiConnector {
+				public static class: java.lang.Class<io.witfy.jitsiconnector.JitsiConnector>;
+				public constructor();
 				public startVideo(context: android.content.Context, roomName: string);
 				public startVideo(
 					context: android.content.Context, 
 					roomName: string, 
 					configuration: io.witfy.jitsiconnector.config.JitsiConnectorConfiguration);
+				public setJitsiStateListener(listener: io.witfy.jitsiconnector.JitsiStateListener);
+				public finish(): void;
+				public leave(): void;
 			}
 		}
 	}
@@ -66,11 +71,38 @@ declare module io {
 	export module witfy {
 		export module jitsiconnector {
 			export class JitsiConnectorActivity {
+				public static class: java.lang.Class<io.witfy.jitsiconnector.JitsiConnectorActivity>;
+				public constructor();
 				public startVideo(context: android.content.Context, roomName: string);
 				public startVideo(
 					context: android.content.Context, 
 					roomName: string, 
 					configuration: io.witfy.jitsiconnector.config.JitsiConnectorConfiguration);
+				public getJitsiView(): java.lang.Object<org.jitsi.meet.sdk.JitsiMeetView>;
+				public setJitsiStateListener(listener: io.witfy.jitsiconnector.JitsiStateListener);
+				public finish(): void;
+				public leave(): void;
+			}
+		}
+	}
+}
+
+declare module io {
+	export module witfy {
+		export module jitsiconnector {
+			export class JitsiStateListener {
+				public static class: java.lang.Class<io.witfy.jitsiconnector.JitsiStateListener>;
+				public constructor(implementation: {
+					onConferenceStarted(text: string): void;
+					onConferenceTerminated(url: string, error: string): void;
+					onConferenceWillJoin(url: string): void;
+					onConferenceJoined(url: string): void;
+				});
+				public constructor();
+				public onConferenceStarted(text: string): void;
+				public onConferenceTerminated(url: string, error: string): void;
+				public onConferenceWillJoin(url: string): void;
+				public onConferenceJoined(url: string): void;
 			}
 		}
 	}

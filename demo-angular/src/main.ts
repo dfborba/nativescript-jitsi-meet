@@ -2,5 +2,7 @@
 import { platformNativeScriptDynamic } from "nativescript-angular/platform";
 
 import { AppModule } from "./app/app.module";
+var trace = require("trace");
+trace.enable();
 
 platformNativeScriptDynamic().bootstrapModule(AppModule);
