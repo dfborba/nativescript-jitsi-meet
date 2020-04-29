@@ -93,7 +93,13 @@ export class NativescriptJitsiMeet {
         this._jitsiView.delegate = delegate;
         this._jitsiView.join(jitsiMeetOptions);
         
-        this._getViewControllerToPresentFrom().presentViewControllerAnimatedCompletion(newViewController, true, () => {});
+        setTimeout(() => {
+            this._getViewControllerToPresentFrom(
+                    options.presentInRootVewController !== undefined 
+                        ? options.presentInRootVewController : false 
+                    )
+                .presentViewControllerAnimatedCompletion(newViewController, true, () => {});
+        }, this._isPresentingModally() ? 650 : 0);
     }
 
     private _getViewControllerToPresentFrom(presentInRootViewController?: boolean): UIViewController {
@@ -123,6 +129,26 @@ export class NativescriptJitsiMeet {
     
         this._lastScanViewController = viewController;
         return viewController;
+    }
+
+    private _isPresentingModally(): boolean {
+        let frame = require("tns-core-modules/ui/frame");
+        let viewController: UIViewController;
+        let topMostFrame = frame.topmost();
+    
+        if (frame.topmost()) {
+            viewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
+    
+            if (viewController) {
+                while (viewController.parentViewController) {
+                    viewController = viewController.parentViewController;
+                }
+        
+                return !!viewController.presentedViewController;
+            }
+        }
+    
+        return false;
     }
 
     private _closeViewController() {

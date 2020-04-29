@@ -1,5 +1,7 @@
 export declare interface NativescriptJitsiMeetConferenceOptions {
 	roomName: string,
+	presentInRootVewController?: boolean,
+	fullScreen?: boolean,
 	audioMuted?: boolean,
 	videoMuted?: boolean,
 	audioOnly?: boolean,
