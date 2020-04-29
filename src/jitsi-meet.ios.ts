@@ -17,20 +17,56 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
     
     conferenceJoined(data: NSDictionary<string, any>): void {
         this._hasJoined = true;
+        if (!this._owner) {
+            return;
+        }
+
         this._owner.get()._callEventListeners('conferenceJoined', data);
     }
 
     conferenceTerminated(data: NSDictionary<string, any>): void {
+        if (!this._owner) {
+            return;
+        }
+
         this._owner.get()._closeViewController();
         this._owner.get()._callEventListeners('conferenceTerminated', data);
     }
 
     conferenceWillJoin(data: NSDictionary<string, any>): void {
+        if (!this._owner) {
+            return;
+        }
+
         this._owner.get()._callEventListeners('conferenceWillJoin', data);
     }
 
     enterPictureInPicture(data: NSDictionary<string, any>): void {
+        if (!this._owner) {
+            return;
+        }
+
         this._owner.get()._callEventListeners('enterPictureInPicture', data);
+    }
+}
+
+class MyUIViewController extends UIViewController {
+    view: JitsiMeetView;
+
+    viewDidAppear(animated: boolean): void {
+        super.viewDidAppear(animated);
+    }
+
+	viewDidDisappear(animated: boolean): void {
+        super.viewDidDisappear(animated);
+
+        if (!!this.view) {
+            this.view.leave();
+        }
+    }
+
+    isJitsiMeetRunning(): boolean {
+        return false;
     }
 }
 
@@ -86,23 +122,26 @@ export class NativescriptJitsiMeet {
             }
         });
 
-        var newViewController = UIViewController.new();
-        let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
+        var newViewController = MyUIViewController.new();
 
+        let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
         this._jitsiView = JitsiMeetView.new();
+    
         newViewController.view = this._jitsiView;
         newViewController.modalPresentationStyle = options.fullScreen !== undefined && options.fullScreen
             ? UIModalPresentationStyle.FullScreen : UIModalPresentationStyle.PageSheet;
-        
+
         this._jitsiView.delegate = delegate;
         this._jitsiView.join(jitsiMeetOptions);
-        
-        setTimeout(() => {
-            this._getViewControllerToPresentFrom(
+
+        const presentViewController = 
+                this._getViewControllerToPresentFrom(
                     options.presentInRootVewController !== undefined 
                         ? options.presentInRootVewController : false 
-                    )
-                .presentViewControllerAnimatedCompletion(newViewController, true, () => {});
+                        );
+        
+        setTimeout(() => {
+            presentViewController.presentViewControllerAnimatedCompletion(newViewController, true, () => {});
         }, this._isPresentingModally() ? 650 : 0);
     }
 
@@ -156,6 +195,7 @@ export class NativescriptJitsiMeet {
     }
 
     private _closeViewController() {
+        const that = this;
         if (this._lastScanViewController) {
             this._lastScanViewController.dismissViewControllerAnimatedCompletion(true, null);
             this._lastScanViewController = undefined;
