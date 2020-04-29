@@ -1,55 +1,58 @@
 import * as application from "tns-core-modules/application";
-import { JitsiMeetConferenceOptions } from './jitsi-meet-configuration';
+import { JitsiMeetConferenceOptions } from './jitsi-meet-options';
+import { JitsiMeet } from "./jitsi-meet.common";
 
-export class JitsiMeet {
+export class JitsiMeetImpl implements JitsiMeet  {
 	private _configuration: io.witfy.jitsiconnector.config.JitsiConnectorConfiguration;
+	private _options: JitsiMeetConferenceOptions;
 
-	constructor(options?: JitsiMeetConferenceOptions) {
+	constructor(o?: JitsiMeetConferenceOptions) {
 		let featureFlagsMap = new io.witfy.jitsiconnector.config.JitsiConnectorFeatureFlagConfiguration();
+		this.options = o;
 
-		if (!!options) {
-			if (!!options.featureFlags) {
-				if (options.featureFlags.calendarEnabled !== undefined) {
-					featureFlagsMap.setCalendarEnabled(options.featureFlags.calendarEnabled);
+		if (!!this.options) {
+			if (!!this.options.featureFlags) {
+				if (this.options.featureFlags.calendarEnabled !== undefined) {
+					featureFlagsMap.setCalendarEnabled(this.options.featureFlags.calendarEnabled);
 				} else {
 					featureFlagsMap.setCalendarEnabled(true);
 				}
 
-				if (options.featureFlags.callIntegration !== undefined) {
-					featureFlagsMap.setCallIntegrationEnabled(options.featureFlags.callIntegration);
+				if (this.options.featureFlags.callIntegration !== undefined) {
+					featureFlagsMap.setCallIntegrationEnabled(this.options.featureFlags.callIntegration);
 				} else {
 					featureFlagsMap.setCallIntegrationEnabled(true);
 				}
 
-				if (options.featureFlags.chatEnabled !== undefined) {
-					featureFlagsMap.setChatEnabled(options.featureFlags.chatEnabled);
+				if (this.options.featureFlags.chatEnabled !== undefined) {
+					featureFlagsMap.setChatEnabled(this.options.featureFlags.chatEnabled);
 				} else {
 					featureFlagsMap.setChatEnabled(true);
 				}
 
-				if (options.featureFlags.inviteEnabled !== undefined) {
-					featureFlagsMap.setInviteEnabled(options.featureFlags.inviteEnabled);
+				if (this.options.featureFlags.inviteEnabled !== undefined) {
+					featureFlagsMap.setInviteEnabled(this.options.featureFlags.inviteEnabled);
 				} else {
 					featureFlagsMap.setInviteEnabled(true);
 				}
 
-				if (options.featureFlags.iosRecordingEnabled !== undefined) {
-					featureFlagsMap.setIosRecordingEnabled(options.featureFlags.iosRecordingEnabled);
+				if (this.options.featureFlags.iosRecordingEnabled !== undefined) {
+					featureFlagsMap.setIosRecordingEnabled(this.options.featureFlags.iosRecordingEnabled);
 				} else {
 					featureFlagsMap.setIosRecordingEnabled(false);
 				}
 
-				if (options.featureFlags.pipEnabled !== undefined) {
-					featureFlagsMap.setPipEnabled(options.featureFlags.pipEnabled);
+				if (this.options.featureFlags.pipEnabled !== undefined) {
+					featureFlagsMap.setPipEnabled(this.options.featureFlags.pipEnabled);
 				} else {
 					featureFlagsMap.setPipEnabled(false);
 				}
 			}
 
 			this._configuration = new io.witfy.jitsiconnector.config.JitsiConnectorConfiguration();
-			this._configuration.setAudioMuted(options.audioMuted);
-			this._configuration.setAudioOnly(options.audioOnly);
-			this._configuration.setVideoMuted(options.videoMuted);
+			this._configuration.setAudioMuted(this.options.audioMuted);
+			this._configuration.setAudioOnly(this.options.audioOnly);
+			this._configuration.setVideoMuted(this.options.videoMuted);
 			this._configuration.setFeatureFlags(featureFlagsMap);
 		} else {
 			featureFlagsMap.setCalendarEnabled(true);
@@ -60,9 +63,9 @@ export class JitsiMeet {
 			featureFlagsMap.setPipEnabled(false);
 
 			this._configuration = new io.witfy.jitsiconnector.config.JitsiConnectorConfiguration();
-			this._configuration.setAudioMuted(options.audioMuted);
-			this._configuration.setAudioOnly(options.audioOnly);
-			this._configuration.setVideoMuted(options.videoMuted);
+			this._configuration.setAudioMuted(this.options.audioMuted);
+			this._configuration.setAudioOnly(this.options.audioOnly);
+			this._configuration.setVideoMuted(this.options.videoMuted);
 			this._configuration.setFeatureFlags(featureFlagsMap);
 		}
 	}
@@ -96,5 +99,13 @@ export class JitsiMeet {
 		} else {
 			throw 'Room name is mandatory in order to open Jitsi meet!';
 		}
+	}
+
+	get options(): JitsiMeetConferenceOptions {
+		return this._options;
+	}
+
+	set options(options: JitsiMeetConferenceOptions) {
+		this._options = options;
 	}
 }
