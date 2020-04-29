@@ -24,3 +24,5 @@ publish/package
 demo/report/report.html
 demo/report/stats.json
 !demo-vue/app/app.js
+src/platforms/ios/Pods
+src/platforms/ios/Podfile.lock

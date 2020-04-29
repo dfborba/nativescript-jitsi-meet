@@ -1,26 +1,73 @@
-<ActionBar>
+<ActionBar >
     <Label text="Home"></Label>
 </ActionBar>
-
-<GridLayout rows="auto auto auto" columns="2* 2*">
-    <FlexboxLayout row="0" col="0" colSpan="2" flexWrap="wrap" class="p-20">
-        <StackLayout orientation="horizontal" margin="5" padding="0">
-            <Label class="h3" text="Audio.muted" verticalAlignment="middle"></Label>
-            <Switch checked="false" (checkedChange)="audioMuted($event)"></Switch>
+<GridLayout class="nt-page" rows="auto *">
+    <StackLayout row="0">
+        <Label textWrap="true" fontWeight="bold" class="h3 p-x-10 m-t-20" color="black"
+            text="By default everything is false" verticalAlignment="middle"></Label>
+        <FlexboxLayout flexWrap="wrap" class="p-10">
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Audio.muted" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="audioMuted($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Video.muted" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="videoMuted($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Audio.only" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="audioOnly($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Invited" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="inviteEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="CloseCaptions" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="closeCaptionsEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Calendar" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="calendarEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="CallIntegration" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="callIntegration($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Chat" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="chatEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="IOSRecording" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="iosRecordingEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="PIP" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="pipEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="Welcomepage" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="welcomePageEnabled($event)"></Switch>
+            </StackLayout>
+            <StackLayout orientation="horizontal" margin="0" padding="0">
+                <Label class="h4" text="ShowUserInfo" verticalAlignment="middle"></Label>
+                <Switch checked="false" (checkedChange)="showUserInfo($event)"></Switch>
+            </StackLayout>
+        </FlexboxLayout>
+        <Label textWrap="true" fontWeight="bold" class="h3 p-x-10 m-t-20" color="black"
+            text="By default the this demo app uses jitsy default server, but feel free to use your own" verticalAlignment="middle"></Label>
+        <TextField (textChange)="serverNameChange($event)" hint="https://meet.jit.si" margin="10"></TextField>
+        <Label textWrap="true" fontWeight="bold" class="h3 p-x-10 m-t-20" color="black"
+            text="By default the name will be 'witfy-2020-test'" verticalAlignment="middle"></Label>
+        <TextField (textChange)="roomNameChange($event)" hint="Type room name" margin="10"></TextField>
+        <Button marginTop="20"
+            class="-primary" text="Start Meet" (tap)="startMeet()"></Button>
+        <StackLayout class="hr" marginTop="10"></StackLayout>
+    </StackLayout>
+    <ScrollView row="1">
+        <StackLayout padding="10">
+            <Label class="body" [text]="jitsiEventLog" textWrap="true"></Label>
         </StackLayout>
-        <StackLayout orientation="horizontal" margin="5" padding="0">
-            <Label class="h3" text="Video.muted" verticalAlignment="middle"></Label>
-            <Switch checked="false" (checkedChange)="videoMuted($event)"></Switch>
-        </StackLayout>
-        <StackLayout orientation="horizontal" margin="5" padding="0">
-            <Label class="h3" text="Audio.only" verticalAlignment="middle"></Label>
-            <Switch checked="false" (checkedChange)="audioOnly($event)"></Switch>
-        </StackLayout>
-        <StackLayout orientation="horizontal" margin="5" padding="0">
-            <Label class="h3" text="Invited.enable" verticalAlignment="middle"></Label>
-            <Switch checked="false" (checkedChange)="inviteEnabled($event)"></Switch>
-        </StackLayout>
-    </FlexboxLayout>
-    <TextField (textChange)="roomNameChange($event)" row="1" col="0"></TextField>
-    <Button row="2" col="0" class="-primary" text="Start View" (tap)="startVideo()"></Button>
+    </ScrollView>
 </GridLayout>

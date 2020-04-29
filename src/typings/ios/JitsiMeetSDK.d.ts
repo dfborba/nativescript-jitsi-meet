@@ -9,6 +9,15 @@ declare var JitsiMeetViewDelegate: {
     prototype: JitsiMeetViewDelegate;
 }
 
+declare class JitsiMeetUserInfo extends NSObject {
+    static alloc(): JitsiMeetUserInfo;
+    static new(): JitsiMeetUserInfo;
+
+    displayName: string;
+    email: string;
+    avatar: NSURL;
+}
+
 declare class JitsiMeetConferenceOptionsBuilder extends NSObject {
     static alloc(): JitsiMeetConferenceOptionsBuilder;
     static new(): JitsiMeetConferenceOptionsBuilder;
@@ -23,6 +32,10 @@ declare class JitsiMeetConferenceOptionsBuilder extends NSObject {
     audioOnly: boolean;
     videoMuted: boolean;
     welcomePageEnabled: boolean;
+    userInfo: JitsiMeetUserInfo;
+    
+    public setFeatureFlagWithBoolean(flag: string, value: boolean);
+    public setFeatureFlagWithValue(flag: string, value: any);
 }
 
 declare class JitsiMeetConferenceOptions extends NSObject {
@@ -39,7 +52,8 @@ declare class JitsiMeetConferenceOptions extends NSObject {
     readonly audioOnly: boolean;
     readonly videoMuted: boolean;
     readonly welcomePageEnabled: boolean;
-
+    readonly userInfo: JitsiMeetUserInfo;
+    
     static fromBuilder(initBlock: Function): JitsiMeetConferenceOptions;
 }
 

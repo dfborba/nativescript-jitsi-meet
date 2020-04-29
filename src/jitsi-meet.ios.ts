@@ -1,6 +1,4 @@
-
-import { JitsiMeetConferenceOptions } from "./jitsi-meet-options";
-import { JitsiMeet } from "./jitsi-meet.common";
+import { NativescriptJitsiMeetConferenceOptions } from "./jitsi-meet.common";
 
 class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDelegate {
     public static ObjCProtocols = [JitsiMeetViewDelegate];
@@ -16,72 +14,86 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
         return <MyJitsiMeetViewDelegateImpl>super.new();
     }
 
-    private _callback: (data: NSDictionary<string, any>) => void; 
-
-    setCallback(toCall: (data: NSDictionary<string, any>) => void): void {
-        this._callback = toCall; 
-    }
-
     conferenceJoined(data: NSDictionary<string, any>): void {
-        console.log('conferenceJoined');
-        this._callback(data);
+        this._owner.get()._callEventListeners('conferenceJoined', data);
     }
 
     conferenceTerminated(data: NSDictionary<string, any>): void {
-        console.log('conferenceTerminated');
-        this._callback(data);
         this._owner.get()._closeViewController();
+        this._owner.get()._callEventListeners('conferenceTerminated', data);
     }
 
     conferenceWillJoin(data: NSDictionary<string, any>): void {
-        this._callback(data);
-        console.log('conferenceWillJoin');
+        this._owner.get()._callEventListeners('conferenceWillJoin', data);
     }
 
     enterPictureInPicture(data: NSDictionary<string, any>): void {
-        this._callback(data);
-        console.log('enterPictureInPicture');
+        this._owner.get()._callEventListeners('enterPictureInPicture', data);
     }
 }
 
-export class JitsiMeetImpl implements JitsiMeet {
-    private _options: JitsiMeetConferenceOptions;
+export class NativescriptJitsiMeet {
     private _lastScanViewController: UIViewController;
+    private _eventListeners: Array<{ event: string, callback: (url: string, error?: string) => void }>;
+    private _serverURL: string = '';
+    private _jitsiView: JitsiMeetView;
 
-    constructor(o: JitsiMeetConferenceOptions) {
-        
+    constructor(serverURL?: string) {
+        this._eventListeners = new Array();
+        this._serverURL = !!serverURL ? serverURL : 'https://meet.jit.si';
     }
 
-    startMeeting(roomName: string): void {
+    startMeeting(options: NativescriptJitsiMeetConferenceOptions): void {
         let jitsiMeetOptions = JitsiMeetConferenceOptions.fromBuilder((builder: JitsiMeetConferenceOptionsBuilder) => {
-            builder.audioOnly = false;
-            builder.videoMuted = false;
-            builder.serverURL = new NSURL({ string: 'https://meet.jit.si' });
-            builder.room = 'witfy-2020';
+            builder.audioOnly = options.audioOnly;
+            builder.videoMuted = options.videoMuted;
+            builder.serverURL = new NSURL({ string: this._serverURL });
+            builder.room = options.roomName;
+
+            if (!!options.featureFlags) {
+                builder.setFeatureFlagWithBoolean('calendar.enabled', 
+                    (options.featureFlags.calendarEnabled !== undefined ? options.featureFlags.calendarEnabled : false));
+                builder.setFeatureFlagWithBoolean('call-integration.enabled', 
+                    (options.featureFlags.callIntegration !== undefined ? options.featureFlags.callIntegration : false));
+                builder.setFeatureFlagWithBoolean('close-captions.enabled', 
+                    (options.featureFlags.closeCaptionsEnabled !== undefined ? options.featureFlags.closeCaptionsEnabled : false));
+                builder.setFeatureFlagWithBoolean('chat.enabled', 
+                    (options.featureFlags.chatEnabled !== undefined ? options.featureFlags.chatEnabled : false));
+                builder.setFeatureFlagWithBoolean('invite.enabled', 
+                    (options.featureFlags.inviteEnabled !== undefined ? options.featureFlags.inviteEnabled : false));
+                builder.setFeatureFlagWithBoolean('ios-recording.enabled', 
+                    (options.featureFlags.iosRecordingEnabled !== undefined ? options.featureFlags.iosRecordingEnabled : false));
+                builder.setFeatureFlagWithBoolean('welcomepage.enabled', 
+                    (options.featureFlags.welcomePageEnabled !== undefined ? options.featureFlags.welcomePageEnabled : false));
+            } else {
+                builder.setFeatureFlagWithBoolean('calendar.enabled', false);
+                builder.setFeatureFlagWithBoolean('call-integration.enabled', false);
+                builder.setFeatureFlagWithBoolean('close-captions.enabled', false);
+                builder.setFeatureFlagWithBoolean('chat.enabled', false);
+                builder.setFeatureFlagWithBoolean('invite.enabled', false);
+                builder.setFeatureFlagWithBoolean('ios-recording.enabled', false);
+                builder.setFeatureFlagWithBoolean('welcomepage.enabled', false);
+            }
+
+            if (!!options.userInfo) {
+                let userInfo = new JitsiMeetUserInfo();
+                userInfo.displayName = options.userInfo.displayName !== undefined ? options.userInfo.displayName : null;
+                userInfo.email = options.userInfo.email !== undefined ? options.userInfo.email : null;
+                userInfo.avatar = options.userInfo.avatar !== undefined ? new NSURL({ string: options.userInfo.avatar }) : null;
+                builder.userInfo = userInfo;
+            }
         });
 
         var newViewController = UIViewController.new();
-        
-        const that = this;
         let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
-        delegate.setCallback((data: NSDictionary<string, any>) => {
-            console.log('view delegate call back has being called');
-        });
-            
-        let jitsiView: JitsiMeetView = JitsiMeetView.new();
-        newViewController.view = jitsiView;
-        jitsiView.delegate = delegate;
-
-        jitsiView.join(jitsiMeetOptions);
+        this._jitsiView = JitsiMeetView.new();
+        newViewController.view = this._jitsiView;
+        newViewController.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
+        
+        this._jitsiView.delegate = delegate;
+        this._jitsiView.join(jitsiMeetOptions);
+        
         this._getViewControllerToPresentFrom().presentViewControllerAnimatedCompletion(newViewController, true, () => {});
-    }
-
-    get options(): JitsiMeetConferenceOptions {
-        return this._options;
-    }
-
-    set options(options: JitsiMeetConferenceOptions) {
-        this._options = options;
     }
 
     private _getViewControllerToPresentFrom(presentInRootViewController?: boolean): UIViewController {
@@ -117,6 +129,41 @@ export class JitsiMeetImpl implements JitsiMeet {
         if (this._lastScanViewController) {
             this._lastScanViewController.dismissViewControllerAnimatedCompletion(true, null);
             this._lastScanViewController = undefined;
+        } else {
+            this._getViewControllerToPresentFrom().dismissViewControllerAnimatedCompletion(true, null);
         }
+
+        this._jitsiView = undefined;
+    }
+
+    stopMeeting(): void {
+        if (!!this._jitsiView) {
+            this._jitsiView.leave();
+        }
+    }
+
+    private _callEventListeners(eventName: string, data: NSDictionary<string, any>) {
+        const eventListener = this._eventListeners.find(eventListener => eventListener.event === eventName);
+        if (!!eventListener) {
+            const url = data.objectForKey('url');
+            const error = data.objectForKey('error');
+
+            eventListener.callback(url, error ? error : null);
+        }
+    }
+
+    on(eventName: string, callback: (url: string, error?: string) => void) {
+        if (eventName === 'conferenceWillJoin'
+                || eventName === 'conferenceJoined'
+                    || eventName === 'conferenceTerminated'
+                        || eventName === 'enterPictureInPicture') {
+            if (!this._eventListeners.find(eventListener => eventListener.event === eventName)) {
+                this._eventListeners.push({ event: eventName, callback: callback });
+            }
+        }
+    }
+
+    addEventListener(event: string, callback: (url: string, error?: string) => void) {
+        this.on(event, callback);
     }
 }
