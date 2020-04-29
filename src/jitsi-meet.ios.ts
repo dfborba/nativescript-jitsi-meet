@@ -3,6 +3,7 @@ import { NativescriptJitsiMeetConferenceOptions } from "./jitsi-meet.common";
 class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDelegate {
     public static ObjCProtocols = [JitsiMeetViewDelegate];
     private _owner: WeakRef<any>;
+    private _hasJoined: boolean = false;
 
     public static initWithOwner(owner: WeakRef<any>): MyJitsiMeetViewDelegateImpl {
         let delegate = this.new();
@@ -13,8 +14,9 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
     static new(): MyJitsiMeetViewDelegateImpl {
         return <MyJitsiMeetViewDelegateImpl>super.new();
     }
-
+    
     conferenceJoined(data: NSDictionary<string, any>): void {
+        this._hasJoined = true;
         this._owner.get()._callEventListeners('conferenceJoined', data);
     }
 
@@ -86,9 +88,11 @@ export class NativescriptJitsiMeet {
 
         var newViewController = UIViewController.new();
         let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
+
         this._jitsiView = JitsiMeetView.new();
         newViewController.view = this._jitsiView;
-        newViewController.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
+        newViewController.modalPresentationStyle = options.fullScreen !== undefined && options.fullScreen
+            ? UIModalPresentationStyle.FullScreen : UIModalPresentationStyle.PageSheet;
         
         this._jitsiView.delegate = delegate;
         this._jitsiView.join(jitsiMeetOptions);
@@ -158,8 +162,6 @@ export class NativescriptJitsiMeet {
         } else {
             this._getViewControllerToPresentFrom().dismissViewControllerAnimatedCompletion(true, null);
         }
-
-        this._jitsiView = undefined;
     }
 
     stopMeeting(): void {
