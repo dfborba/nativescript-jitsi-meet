@@ -25,7 +25,14 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
     }
 
     conferenceTerminated(data: NSDictionary<string, any>): void {
+        console.log(`
+        ***> conferenceTerminated
+        `);
+        
         if (!this._owner) {
+            console.log(`
+            ***> owner is null
+            `);
             return;
         }
 
@@ -55,14 +62,46 @@ class MyUIViewController extends UIViewController {
 
     viewDidAppear(animated: boolean): void {
         super.viewDidAppear(animated);
+        console.log(`
+        #viewDidAppear
+        `);
     }
 
 	viewDidDisappear(animated: boolean): void {
         super.viewDidDisappear(animated);
+        console.log(`
+        #viewDidDisappear
+        `);
 
         if (!!this.view) {
+            console.log(`
+            #this.view is not null
+            `);
             this.view.leave();
+        } else {
+            console.log(`
+            #this.view is null
+            `);
+
         }
+    }
+
+    viewDidUnload(): void {
+        console.log(`
+        #viewDidUnload
+        `);
+    }
+
+    viewWillDisappear(): void {
+        console.log(`
+        #viewWillDisappear
+        `);
+    }
+
+    removeFromParentViewController(): void {
+        console.log(`
+        #removeFromParentViewController
+        `);
     }
 
     isJitsiMeetRunning(): boolean {
@@ -123,16 +162,17 @@ export class NativescriptJitsiMeet {
         });
 
         var newViewController = MyUIViewController.new();
-
-        let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
-        this._jitsiView = JitsiMeetView.new();
-    
-        newViewController.view = this._jitsiView;
         newViewController.modalPresentationStyle = options.fullScreen !== undefined && options.fullScreen
             ? UIModalPresentationStyle.FullScreen : UIModalPresentationStyle.PageSheet;
 
+        this._jitsiView = JitsiMeetView.new();
+        let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
         this._jitsiView.delegate = delegate;
-        this._jitsiView.join(jitsiMeetOptions);
+    
+        newViewController.view = this._jitsiView;
+        setTimeout(() => {
+            this._jitsiView.join(jitsiMeetOptions);
+        }, 500)
 
         const presentViewController = 
                 this._getViewControllerToPresentFrom(
