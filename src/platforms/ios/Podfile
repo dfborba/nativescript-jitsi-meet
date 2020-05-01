@@ -1,5 +1,5 @@
 platform :ios, '11.0'
-pod 'JitsiMeetSDK'
+pod 'JitsiMeetSDK', '2.8.1'
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

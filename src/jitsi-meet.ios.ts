@@ -90,18 +90,64 @@ class MyUIViewController extends UIViewController {
         console.log(`
         #viewDidUnload
         `);
+        super.viewDidUnload();
     }
 
-    viewWillDisappear(): void {
+    viewWillDisappear(animated: boolean): void {
         console.log(`
-        #viewWillDisappear
+        #viewWillDisappear ${animated}
         `);
+        super.viewWillDisappear(animated);
     }
 
     removeFromParentViewController(): void {
         console.log(`
         #removeFromParentViewController
         `);
+        super.removeFromParentViewController();
+    }
+
+    applicationFinishedRestoringState(): void {
+        console.log(`
+        #applicationFinishedRestoringState
+        `);
+        super.applicationFinishedRestoringState();
+    }
+
+    beginAppearanceTransitionAnimated(isAppearing: boolean, animated: boolean): void {
+        console.log(`
+        #beginAppearanceTransitionAnimated
+        `);
+
+        super.beginAppearanceTransitionAnimated(isAppearing, animated);
+    }
+
+    didMoveToParentViewController(parent: UIViewController): void {
+        console.log(`
+        #didMoveToParentViewController
+        `);
+        super.didMoveToParentViewController(parent);
+    }
+
+    dismissModalViewControllerAnimated(animated: boolean): void {
+        console.log(`
+        #dismissModalViewControllerAnimated ${animated}
+        `);
+        super.dismissModalViewControllerAnimated(animated);
+    }
+
+    performSegueWithIdentifierSender(identifier: string, sender: any): void {
+        console.log(`
+        #performSegueWithIdentifierSender ${identifier}
+        `);
+        super.performSegueWithIdentifierSender(identifier, sender);
+    }
+
+    shouldPerformSegueWithIdentifierSender(identifier: string, sender: any): boolean {
+        console.log(`
+        #shouldPerformSegueWithIdentifierSender ${identifier}
+        `);
+        return super.shouldPerformSegueWithIdentifierSender(identifier, sender);
     }
 
     isJitsiMeetRunning(): boolean {
@@ -170,25 +216,26 @@ export class NativescriptJitsiMeet {
         this._jitsiView.delegate = delegate;
     
         newViewController.view = this._jitsiView;
+        
         setTimeout(() => {
             this._jitsiView.join(jitsiMeetOptions);
-        }, 500)
 
-        const presentViewController = 
+            const presentViewController = 
                 this._getViewControllerToPresentFrom(
                     options.presentInRootVewController !== undefined 
                         ? options.presentInRootVewController : false 
                         );
         
-        setTimeout(() => {
-            presentViewController.presentViewControllerAnimatedCompletion(newViewController, true, () => {});
-        }, this._isPresentingModally() ? 650 : 0);
+            setTimeout(() => {
+                presentViewController.presentViewControllerAnimatedCompletion(newViewController, true, () => {});
+            }, this._isPresentingModally() ? 650 : 0);
+        }, 650)
     }
 
     private _getViewControllerToPresentFrom(presentInRootViewController?: boolean): UIViewController {
         let frame = require("tns-core-modules/ui/frame");
         let viewController: UIViewController;
-        let topMostFrame = frame.topmost();
+        let topMostFrame = frame.Frame.topmost();
     
         if (topMostFrame && presentInRootViewController !== true) {
             viewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
@@ -217,9 +264,9 @@ export class NativescriptJitsiMeet {
     private _isPresentingModally(): boolean {
         let frame = require("tns-core-modules/ui/frame");
         let viewController: UIViewController;
-        let topMostFrame = frame.topmost();
+        let topMostFrame = frame.Frame.topmost();
     
-        if (frame.topmost()) {
+        if (frame.Frame.topmost()) {
             viewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
     
             if (viewController) {
