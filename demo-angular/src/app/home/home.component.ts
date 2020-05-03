@@ -31,7 +31,10 @@ export class HomeComponent implements OnInit {
                 inviteEnabled: false,
                 iosRecordingEnabled: false,
                 pipEnabled: false,
-                welcomePageEnabled: true
+                welcomePageEnabled: false
+            },
+            userInfo: {
+                displayName: 'Daniel Borba'
             }
         };
     }

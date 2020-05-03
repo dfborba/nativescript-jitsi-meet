@@ -1,4 +1,5 @@
 import { NativescriptJitsiMeetConferenceOptions } from "./jitsi-meet.common";
+import * as application from "tns-core-modules/application";
 
 class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDelegate {
     public static ObjCProtocols = [JitsiMeetViewDelegate];
@@ -36,7 +37,7 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
             return;
         }
 
-        this._owner.get()._closeViewController();
+        this._owner.get().closeViewController();
         this._owner.get()._callEventListeners('conferenceTerminated', data);
     }
 
@@ -155,6 +156,22 @@ class MyUIViewController extends UIViewController {
     }
 }
 
+export class CustomAppDelegate extends UIResponder implements UIApplicationDelegate {
+    public static ObjCProtocols = [UIApplicationDelegate];
+
+    private bgTask;
+    private timer;
+    private timerCounter;
+
+    public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler: any) {
+        console.log('App is running in background');
+    }
+
+    public applicationDidFailToContinueUserActivityWithTypeError(application: UIApplication, userActivityType: string, error: NSError) {
+        console.log('applicationDidFailToContinueUserActivityWithTypeError');
+    }
+}
+
 export class NativescriptJitsiMeet {
     private _lastScanViewController: UIViewController;
     private _eventListeners: Array<{ event: string, callback: (url: string, error?: string) => void }>;
@@ -162,6 +179,7 @@ export class NativescriptJitsiMeet {
     private _jitsiView: JitsiMeetView;
 
     constructor(serverURL?: string) {
+        application.ios.delegate = CustomAppDelegate;
         this._eventListeners = new Array();
         this._serverURL = !!serverURL ? serverURL : 'https://meet.jit.si';
     }
@@ -212,9 +230,8 @@ export class NativescriptJitsiMeet {
             ? UIModalPresentationStyle.FullScreen : UIModalPresentationStyle.PageSheet;
 
         this._jitsiView = JitsiMeetView.new();
-        let delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
-        this._jitsiView.delegate = delegate;
-    
+        this._jitsiView.delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
+
         newViewController.view = this._jitsiView;
         
         setTimeout(() => {
@@ -227,7 +244,9 @@ export class NativescriptJitsiMeet {
                         );
         
             setTimeout(() => {
-                presentViewController.presentViewControllerAnimatedCompletion(newViewController, true, () => {});
+                presentViewController.presentViewControllerAnimatedCompletion(newViewController, true, () => {
+                    console.log("View has bein presented");
+                });
             }, this._isPresentingModally() ? 650 : 0);
         }, 650)
     }
@@ -281,7 +300,7 @@ export class NativescriptJitsiMeet {
         return false;
     }
 
-    private _closeViewController() {
+    public closeViewController() {
         const that = this;
         if (this._lastScanViewController) {
             this._lastScanViewController.dismissViewControllerAnimatedCompletion(true, null);
