@@ -1,5 +1,4 @@
 import { NativescriptJitsiMeetConferenceOptions } from "./jitsi-meet.common";
-import * as application from "tns-core-modules/application";
 
 class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDelegate {
     public static ObjCProtocols = [JitsiMeetViewDelegate];
@@ -34,11 +33,11 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
             console.log(`
             ***> owner is null
             `);
-            return;
+            closeViewController(null);
+        } else {
+            closeViewController(this._owner.get().lastScanViewController);
+            this._owner.get()._callEventListeners('conferenceTerminated', data);
         }
-
-        this._owner.get().closeViewController();
-        this._owner.get()._callEventListeners('conferenceTerminated', data);
     }
 
     conferenceWillJoin(data: NSDictionary<string, any>): void {
@@ -59,8 +58,30 @@ class MyJitsiMeetViewDelegateImpl extends NSObject implements JitsiMeetViewDeleg
 }
 
 class MyUIViewController extends UIViewController {
-    view: JitsiMeetView;
+    delegate: MyJitsiMeetViewDelegateImpl;
 
+    static alloc(): MyUIViewController {
+        return <MyUIViewController>super.alloc();
+    }
+
+    static new(): MyUIViewController {
+        return <MyUIViewController>super.new();
+    }
+
+    viewDidLayoutSubviews(): void {
+        super.viewDidLayoutSubviews();
+        console.log(`
+        #viewDidLayoutSubviews
+        `);
+    }
+
+	viewDidLoad(): void {
+        super.viewDidLoad();
+        console.log(`
+        #viewDidLoad
+        `);
+    }
+    
     viewDidAppear(animated: boolean): void {
         super.viewDidAppear(animated);
         console.log(`
@@ -78,7 +99,7 @@ class MyUIViewController extends UIViewController {
             console.log(`
             #this.view is not null
             `);
-            this.view.leave();
+            this.getView().leave();
         } else {
             console.log(`
             #this.view is null
@@ -151,37 +172,54 @@ class MyUIViewController extends UIViewController {
         return super.shouldPerformSegueWithIdentifierSender(identifier, sender);
     }
 
-    isJitsiMeetRunning(): boolean {
-        return false;
-    }
-}
-
-export class CustomAppDelegate extends UIResponder implements UIApplicationDelegate {
-    public static ObjCProtocols = [UIApplicationDelegate];
-
-    private bgTask;
-    private timer;
-    private timerCounter;
-
-    public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler: any) {
-        console.log('App is running in background');
+    canPerformUnwindSegueActionFromViewControllerSender(action: string, fromViewController: UIViewController, sender: any): boolean {
+        console.log(`
+        #canPerformUnwindSegueActionFromViewControllerSender 
+        `);
+        return super.canPerformUnwindSegueActionFromViewControllerSender(action, fromViewController, sender);
     }
 
-    public applicationDidFailToContinueUserActivityWithTypeError(application: UIApplication, userActivityType: string, error: NSError) {
-        console.log('applicationDidFailToContinueUserActivityWithTypeError');
+	canPerformUnwindSegueActionFromViewControllerWithSender(action: string, fromViewController: UIViewController, sender: any): boolean {
+        console.log(`
+        #canPerformUnwindSegueActionFromViewControllerWithSender 
+        `);
+        return super.canPerformUnwindSegueActionFromViewControllerWithSender(action, fromViewController, sender);
+    }
+
+    childViewControllerContainingSegueSource(source: UIStoryboardUnwindSegueSource): UIViewController {
+        console.log(`
+        #childViewControllerContainingSegueSource 
+        `);
+        return super.childViewControllerContainingSegueSource(source);
+    }
+
+    getView(): JitsiMeetView {
+        return this.view as JitsiMeetView;
     }
 }
 
 export class NativescriptJitsiMeet {
-    private _lastScanViewController: UIViewController;
+    private _lastViewController: UIViewController;
+    private _currentViewController: MyUIViewController;
     private _eventListeners: Array<{ event: string, callback: (url: string, error?: string) => void }>;
     private _serverURL: string = '';
     private _jitsiView: JitsiMeetView;
+    private _jitsiDelegate: MyJitsiMeetViewDelegateImpl;
 
     constructor(serverURL?: string) {
-        application.ios.delegate = CustomAppDelegate;
         this._eventListeners = new Array();
         this._serverURL = !!serverURL ? serverURL : 'https://meet.jit.si';
+        this._jitsiView = JitsiMeetView.new();
+
+        this._currentViewController = MyUIViewController.new();
+        this._currentViewController.modalPresentationStyle = UIModalPresentationStyle.PageSheet;
+            
+        this._currentViewController.view = this._jitsiView;
+
+        const weekRef = new WeakRef(this);
+        this._jitsiDelegate = MyJitsiMeetViewDelegateImpl.initWithOwner(weekRef);
+
+        this._currentViewController.getView().delegate = this._jitsiDelegate;
     }
 
     startMeeting(options: NativescriptJitsiMeetConferenceOptions): void {
@@ -225,59 +263,22 @@ export class NativescriptJitsiMeet {
             }
         });
 
-        var newViewController = MyUIViewController.new();
-        newViewController.modalPresentationStyle = options.fullScreen !== undefined && options.fullScreen
-            ? UIModalPresentationStyle.FullScreen : UIModalPresentationStyle.PageSheet;
-
-        this._jitsiView = JitsiMeetView.new();
-        this._jitsiView.delegate = MyJitsiMeetViewDelegateImpl.initWithOwner(new WeakRef(this));
-
-        newViewController.view = this._jitsiView;
+        // this._currentViewController.delegate = this._jitsiDelegate;
+        this._currentViewController.getView().join(jitsiMeetOptions);
         
         setTimeout(() => {
-            this._jitsiView.join(jitsiMeetOptions);
-
-            const presentViewController = 
-                this._getViewControllerToPresentFrom(
+            this._lastViewController = 
+                getViewControllerToPresentFrom(
                     options.presentInRootVewController !== undefined 
                         ? options.presentInRootVewController : false 
                         );
         
             setTimeout(() => {
-                presentViewController.presentViewControllerAnimatedCompletion(newViewController, true, () => {
+                this._lastViewController.presentViewControllerAnimatedCompletion(this._currentViewController, true, () => {
                     console.log("View has bein presented");
                 });
             }, this._isPresentingModally() ? 650 : 0);
         }, 650)
-    }
-
-    private _getViewControllerToPresentFrom(presentInRootViewController?: boolean): UIViewController {
-        let frame = require("tns-core-modules/ui/frame");
-        let viewController: UIViewController;
-        let topMostFrame = frame.Frame.topmost();
-    
-        if (topMostFrame && presentInRootViewController !== true) {
-            viewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
-        
-            if (viewController) {
-                while (viewController.parentViewController) {
-                    // find top-most view controler
-                    viewController = viewController.parentViewController;
-                }
-        
-                while (viewController.presentedViewController) {
-                    // find last presented modal
-                    viewController = viewController.presentedViewController;
-                }
-            }
-        }
-    
-        if (!viewController) {
-            viewController = UIApplication.sharedApplication.keyWindow.rootViewController;
-        }
-    
-        this._lastScanViewController = viewController;
-        return viewController;
     }
 
     private _isPresentingModally(): boolean {
@@ -298,16 +299,6 @@ export class NativescriptJitsiMeet {
         }
     
         return false;
-    }
-
-    public closeViewController() {
-        const that = this;
-        if (this._lastScanViewController) {
-            this._lastScanViewController.dismissViewControllerAnimatedCompletion(true, null);
-            this._lastScanViewController = undefined;
-        } else {
-            this._getViewControllerToPresentFrom().dismissViewControllerAnimatedCompletion(true, null);
-        }
     }
 
     stopMeeting(): void {
@@ -339,5 +330,46 @@ export class NativescriptJitsiMeet {
 
     addEventListener(event: string, callback: (url: string, error?: string) => void) {
         this.on(event, callback);
+    }
+
+    get lastScanViewController() {
+        return this._lastViewController;
+    }
+}
+
+function getViewControllerToPresentFrom(presentInRootViewController?: boolean): UIViewController {
+    let frame = require("tns-core-modules/ui/frame");
+    let viewController: UIViewController;
+    let topMostFrame = frame.Frame.topmost();
+
+    if (topMostFrame && presentInRootViewController !== true) {
+        viewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
+    
+        if (viewController) {
+            while (viewController.parentViewController) {
+                // find top-most view controler
+                viewController = viewController.parentViewController;
+            }
+    
+            while (viewController.presentedViewController) {
+                // find last presented modal
+                viewController = viewController.presentedViewController;
+            }
+        }
+    }
+
+    if (!viewController) {
+        viewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    }
+
+    return viewController;
+}
+
+function closeViewController(lastScanViewController: UIViewController): void {
+    if (lastScanViewController) {
+        lastScanViewController.dismissViewControllerAnimatedCompletion(true, null);
+        lastScanViewController = undefined;
+    } else {
+        getViewControllerToPresentFrom().dismissViewControllerAnimatedCompletion(true, null);
     }
 }
