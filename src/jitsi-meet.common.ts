@@ -1,10 +1,10 @@
 export declare interface NativescriptJitsiMeetConferenceOptions {
-	roomName: string,
-	presentInRootVewController?: boolean,
-	fullScreen?: boolean,
-	audioMuted?: boolean,
-	videoMuted?: boolean,
-	audioOnly?: boolean,
+	roomName: string;
+	presentInRootVewController?: boolean;
+	fullScreen?: boolean;
+	audioMuted?: boolean;
+	videoMuted?: boolean;
+	audioOnly?: boolean;
 	featureFlags?: {
 		calendarEnabled?: boolean,
 		callIntegration?: boolean,
@@ -14,12 +14,12 @@ export declare interface NativescriptJitsiMeetConferenceOptions {
 		iosRecordingEnabled?: boolean,
 		pipEnabled?: boolean
 		welcomePageEnabled?: boolean,
-	},
+	};
 	userInfo?: {
 		displayName?: string,
 		email?: string,
 		avatar?: string
-	}
+	};
 }
 
 export declare class NativescriptJitsiMeet {

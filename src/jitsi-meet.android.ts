@@ -15,21 +15,21 @@ export class NativescriptJitsiMeet  {
 		const context = application.android.context;
 		this._jitsiView = new io.witfy.jitsiconnector.JitsiConnectorActivity();
 
-		this._jitsiView.setJitsiStateListener(new io.witfy.jitsiconnector.JitsiStateListener({
-			onConferenceStarted: (test: string) => {
-				console.log('## ' + test);
-			},
-			onConferenceTerminated: (url: string, error: string) => {
-				console.log('url: ' + url);
-				console.log('error: ' + error);
-			},
-			onConferenceWillJoin: (url: string) => {
-				console.log('## onConferenceWillJoin URL = ' + url);
-			},
-			onConferenceJoined: (url: string) => {
-				console.log('## onConferenceJoined ' + url);
-			},
-		}));
+		// this._jitsiView.setJitsiStateListener(new io.witfy.jitsiconnector.JitsiStateListener({
+		// 	onConferenceStarted: (test: string) => {
+		// 		console.log('## ' + test);
+		// 	},
+		// 	onConferenceTerminated: (url: string, error: string) => {
+		// 		console.log('url: ' + url);
+		// 		console.log('error: ' + error);
+		// 	},
+		// 	onConferenceWillJoin: (url: string) => {
+		// 		console.log('## onConferenceWillJoin URL = ' + url);
+		// 	},
+		// 	onConferenceJoined: (url: string) => {
+		// 		console.log('## onConferenceJoined ' + url);
+		// 	},
+		// }));
 
 		const configuration = this._buildObjectOptions(options);
 
@@ -45,10 +45,10 @@ export class NativescriptJitsiMeet  {
 		if (!!options) {
 			if (!!options.featureFlags) {
 				featureFlagsMap.setCalendarEnabled(
-					!!options.featureFlags.calendarEnabled 
+					!!options.featureFlags.calendarEnabled
 						? options.featureFlags.calendarEnabled : false);
 				featureFlagsMap.setCallIntegrationEnabled(
-					!!options.featureFlags.callIntegration 
+					!!options.featureFlags.callIntegration
 						? options.featureFlags.callIntegration : false);
 
 				featureFlagsMap.setChatEnabled(

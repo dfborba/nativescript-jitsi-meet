@@ -31,9 +31,14 @@ export class HomeComponent implements OnInit {
                 inviteEnabled: false,
                 iosRecordingEnabled: false,
                 pipEnabled: false,
-                welcomePageEnabled: true
+                welcomePageEnabled: false
+            },
+            userInfo: {
+                displayName: 'Daniel Borba'
             }
         };
+
+        this._jitsiCaller = new NativescriptJitsiMeet(this._serverName);
     }
 
     ngOnInit(): void {
@@ -51,8 +56,6 @@ export class HomeComponent implements OnInit {
     }
 
     public startMeet() {
-        this._jitsiCaller = new NativescriptJitsiMeet(this._serverName);
-
         this._jitsiCaller.on('conferenceWillJoin', (url: string, error: string) => {
             this.jitsiEventLog += '>> *conferenceWillJoin* ' + url + ' \n';
             this._changeDetectionRef.detectChanges();
@@ -76,7 +79,7 @@ export class HomeComponent implements OnInit {
         if (!!this._roomName) {
             this.jitsiOptions.roomName = this._roomName;
         } else {
-            this.jitsiOptions.roomName = 'witfy-2020-test';
+            this.jitsiOptions.roomName = this._createUUID();
         }
 
         this._jitsiCaller.startMeeting(this.jitsiOptions);
@@ -148,5 +151,16 @@ export class HomeComponent implements OnInit {
         } else {
             this.jitsiOptions.userInfo = undefined;
         }
+    }
+
+    private _createUUID(){
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+
+        return uuid;
     }
 }

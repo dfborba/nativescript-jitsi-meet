@@ -1,6 +1,6 @@
 {
 	"name": "nativescript-jitsi-meet",
-	"version": "1.4.7",
+	"version": "1.4.12",
 	"description": "Nativescript for Jitsi meet developed by Witfy team.",
 	"main": "jitsi-meet",
 	"typings": "index.d.ts",
