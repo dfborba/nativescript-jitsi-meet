@@ -1,10 +1,11 @@
 # nativescript-jitsi-meet
 
-**This plugin is on a very early version.**
+**This plugin is on early version.**
 
 **As soon as the code improves I'll be updating the README as well.**  :wink:
 
-I'll keep improving this plugin as the time pass, if you want to know which are the next features I'll be working take a look below. 
+I'll keep working on this plugin as the time pass and our project have more features related to video conference.
+If you want to know which are the next things I'll be working on take a look below.
 
 ## I'm working on
 - Add call listeners to Android such as conferenceTerminated and etc.
@@ -104,6 +105,14 @@ By default the server https://meet.jit.si/ is the default server used by this pl
 
 This function will receive as parameter your options and will start the meet;
 
+**addEventListener**
+
+You can use this function to add your listener to the events listed below. The parameters are the listener name and your callback function. Take a look on the usage above.
+
+**on**
+
+Same as addEventListener, just smaller :)
+
 ## Jitsi configuration (NativescriptJitsiMeetConferenceOptions)
     
 | Property | Default | Description |
@@ -127,6 +136,7 @@ This function will receive as parameter your options and will start the meet;
 | welcomePageEnabled | false | enables the jitsi server welcome page, which is not being in use right now because everytime the user close the call we close the view, so this will not be shown by now |
 
 ## Events (Only IOS for now)
+
 
 **conferenceWillJoin**
 
