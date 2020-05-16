@@ -23,11 +23,11 @@ The only requisites I found necessary so far is that your application may use *a
 
 *tns plugin add nativescript-jitsi-meet*
 
-## Android
+### Android
 
 -
 
-## IOS
+### IOS
 
 In your info.plist file add the follow lines:
 
@@ -97,7 +97,8 @@ public startMeet() {
 
 ```
 
-## API (NativescriptJitsiMeet)
+## API 
+### NativescriptJitsiMeet
 
 By default the server https://meet.jit.si/ is the default server used by this plugin but you have your own jitsi server you can pass the path on the **constructor** of **NativescriptJitsiMeet**.
 
@@ -113,7 +114,8 @@ You can use this function to add your listener to the events listed below. The p
 
 Same as addEventListener, just smaller :)
 
-## Jitsi configuration (NativescriptJitsiMeetConferenceOptions)
+## Jitsi configuration 
+### NativescriptJitsiMeetConferenceOptions
     
 | Property | Default | Description |
 | --- | --- | --- |
@@ -135,8 +137,8 @@ Same as addEventListener, just smaller :)
 | pipEnabled | false | enable pip features |
 | welcomePageEnabled | false | enables the jitsi server welcome page, which is not being in use right now because everytime the user close the call we close the view, so this will not be shown by now |
 
-## Events (Only IOS for now)
-
+## Events 
+### Only IOS for now
 
 **conferenceWillJoin**
 
