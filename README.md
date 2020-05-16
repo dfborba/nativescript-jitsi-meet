@@ -17,7 +17,7 @@ If you want to know which are the next things I'll be working on take a look bel
 
 ## Prerequisites / Requirements
 
-The only requisits I found necessary so far is that your application may use *android:minSdkVersion **21***;
+The only requisites I found necessary so far is that your application may use *android:minSdkVersion **21***;
 
 ## Installation
 
