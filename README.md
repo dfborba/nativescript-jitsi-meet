@@ -98,7 +98,7 @@ public startMeet() {
 
 ## API
 
-By defaul the server https://meet.jit.si/ is the default server used by this plugin but you have your own jitsi server you can pass the path on the constructor of NativescriptJitsiMeet.
+By default the server https://meet.jit.si/ is the default server used by this plugin but you have your own jitsi server you can pass the path on the constructor of NativescriptJitsiMeet.
 
 **startMeeting**
 This function will recebei as parameter your options and will start the meet;
