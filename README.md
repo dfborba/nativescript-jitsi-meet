@@ -10,17 +10,17 @@ I'll keep improving this plugin as the time pass, if you want to know which are 
 - Add call listeners to Android such as conferenceTerminated and etc.
 - Android is not accepting custom jitsi server yet, only IOS.
 - Add core demo version
-- Test and add Vue demo verion
+- Test and add Vue demo version
 
-- In the future I'd like to have more control of jitsi features such as hide invitation button, start call with password and etc. But so far I haven't found if Jisti already have this available on they framework and sdk.
+- In the future I'd like to have more control of jitsi features such as hide invitation button, start call with password and etc. But so far I haven't found if Jisti already have this available on their framework and sdk.
 
 ## Prerequisites / Requirements
 
-The only requisits I found necessary so far is that you application my use android:minSdkVersion 21;
+The only requisits I found necessary so far is that your application may use *android:minSdkVersion **21***;
 
 ## Installation
 
-tns plugin add nativescript-jitsi-meet
+*tns plugin add nativescript-jitsi-meet*
 
 ## Android
 
@@ -96,14 +96,15 @@ public startMeet() {
 
 ```
 
-## API
+## API (NativescriptJitsiMeet)
 
-By default the server https://meet.jit.si/ is the default server used by this plugin but you have your own jitsi server you can pass the path on the constructor of NativescriptJitsiMeet.
+By default the server https://meet.jit.si/ is the default server used by this plugin but you have your own jitsi server you can pass the path on the **constructor** of **NativescriptJitsiMeet**.
 
 **startMeeting**
-This function will recebei as parameter your options and will start the meet;
 
-## Jitsi configuration
+This function will receive as parameter your options and will start the meet;
+
+## Jitsi configuration (NativescriptJitsiMeetConferenceOptions)
     
 | Property | Default | Description |
 | --- | --- | --- |
@@ -112,6 +113,8 @@ This function will recebei as parameter your options and will start the meet;
 | videoMuted | false | start the meet with the video muted |
 | audioOnly | false | start the meet with audio only |
 | featureFlags | object | some jitsi meet configuration flags |
+
+**feature flags object properties**
 
 | Feature flags property | Default | Description |
 | --- | --- | --- |
