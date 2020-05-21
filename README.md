@@ -1,4 +1,4 @@
-# nativescript-jitsi-meet
+# Nativescript Jitsi Meet
 
 **This plugin is on early version.**
 
